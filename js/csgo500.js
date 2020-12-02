@@ -5,7 +5,7 @@ let isActive = false;
 
 let bet2x = document.getElementById('bet-btn-2x');
 let history = document.getElementById('past-queue-wrapper');
-let balance = document.getElementById('balance');
+let balance = document.querySelector('#balance');
 document.getElementById('bet-input');
 
 
@@ -22,8 +22,9 @@ window.addEventListener('unload', () => {
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.start) {
         // Начинаю работу
-        gameData.startBalance = +document.getElementById('balance').innerText;
-        gameData.currentBalance = +document.getElementById('balance').innerText;
+        console.log(+balance.innerText.split(',').join(''));
+        gameData.startBalance = +balance.innerText.split(',').join('');
+        gameData.currentBalance = +balance.innerText.split(',').join('');
         gameData.maxBalance = +request.maxBalance;
         gameData.getFromBet = +request.getFromBet;
         gameData.currentBet = +request.getFromBet;
@@ -121,10 +122,8 @@ function placeBet(options, now=false) {
     options.currentBalance -= options.currentBet;
     options.betsCounter++;
 
-    setTimeout(test, now ? 0 : 10000);
-}
-
-function test() {
-    // console.log(`Сделана ставка ${gameData.currentBet} монет на Серое. Баланс - ${gameData.currentBalance}.`);
-    chrome.runtime.sendMessage(gameData);
+    setTimeout(() => {
+        chrome.runtime.sendMessage(gameData);
+        document.getElementById('bet-btn-2x').dispatchEvent( new Event('click') );
+    }, now ? 0 : 10000);
 }
