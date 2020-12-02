@@ -7,14 +7,18 @@
 
     "content_scripts": [
         {
-            "matches": [ "*://csgo500.com/*" ],
+            "matches": [ "*://csgo500.com/wheel" ],
             "js": [ "js/csgo500.js" ]
         }
     ],
 
     "background": {
-        "scripts": ["js/main.js"]
+        "scripts": ["js/background.js"]
     },
+
+    "permissions": [
+        "storage"
+    ],
   
     "browser_action": {
         "default_title": "CSGO666",

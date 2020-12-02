@@ -4,9 +4,78 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CSGO500 Bets</title>
+    <style>
+        body {
+            width: 300px;
+            margin: 0;
+            background-color: #26262c;
+        }
+        .header {
+            text-align: center;
+            background-color: #1c1c22;
+            margin: 0;
+            padding: 20px;
+            color: #b7c0be;
+        }
+        input {
+            margin-bottom: 10px;
+            background-color: #80293b;
+            color: white;
+            width: 200px;
+            border-radius: 5px;
+            padding: 5px 10px;
+            border: 0;
+        }   
+        input::placeholder {
+            color:#b7c0be;
+        }
+        input:focus {
+            outline: none;
+        }   
+        button {
+            border-radius: 5px;
+            background-color: #ab2e46;
+            color: white;
+            border: 0;
+            padding: 5px 20px;
+            transition: .2s;
+        }
+        button:hover {
+            cursor: pointer;
+            background-color: #c32d4f;
+            transition: .2s;
+        }
+        button:focus {
+            outline: 0;
+        }
+        .secondary {
+            background-color: #46474a;
+        }
+        button:hover.secondary {
+            background-color: #58595b;
+        }
+        
+
+        .card {
+            background-color: #1c1c22;
+            padding: 20px;
+            margin: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h3>Взлом жизни</h3>
-    <script src="js/popup.js" ></script>
+    <h3 class="header">Автоставки CSGO500</h3>
+    <div class="card" id="options">
+        <input type="number" id="getFromBet" placeholder="Прибыль с одной ставки" min="0" value="10">
+        <input type="number" id="maxBalance" placeholder="Конечный баланс" min="0" value="50000">
+        <div style="display: flex; justify-content: space-between;">
+            <button id="startBetting">Начать</button> 
+            <button id="stopBetting" class="secondary">Остановить</button>
+        </div>
+    </div>
+    <div class="">
+
+    </div>
+    <script src="js/popup.js"></script>
 </body>
 </html>
