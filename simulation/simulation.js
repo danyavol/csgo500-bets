@@ -136,6 +136,23 @@ function strategy3(options) { // только серое, удваиваем н�
     return {color: 'gray', bet: 10 }; // * 2 ** loseStreak};
 }
 
+function strategy4(options) { // только серое, максимум 10 лузов подряд v2
+    const minimalBet = 10;
+    const maxLoseStreak = 10;
+
+    let color = 'gray';
+    let winMultiplier = 2;
+
+    if (loseStreak >= maxLoseStreak) {
+        options.lostOnBets = 0;
+    }
+
+    bet = Math.ceil( (options.wantToGetFromBet + options.lostOnBets) / winMultiplier );
+    if (bet < minimalBet) bet = minimalBet;
+
+    return {color: color, bet: bet};
+}
+
 
 
 

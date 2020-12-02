@@ -1,53 +1,130 @@
+const gameData = {}
+
 let isActive = false;
-let gameData = {
-    startBalance: document.getElementById('balance'),
-    currBalance: document.getElementById('balance')
-}
 
 
 let bet2x = document.getElementById('bet-btn-2x');
-
 let history = document.getElementById('past-queue-wrapper');
-
 let balance = document.getElementById('balance');
-
 document.getElementById('bet-input');
 
-// history.lastChild.classList.contains('past-0'); // выиграло серок
 
 console.log('CSGO500 Bets injected');
 
-// past-spoiler
+
+window.addEventListener('unload', () => {
+    chrome.runtime.sendMessage({onload: true});
+})
+
 
 
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.start) {
         // Начинаю работу
-        gameData.getFromBet = request.getFromBet;
-        gameData.maxBalance = request.maxBalance;
+        gameData.startBalance = +document.getElementById('balance').innerText;
+        gameData.currentBalance = +document.getElementById('balance').innerText;
+        gameData.maxBalance = +request.maxBalance;
+        gameData.getFromBet = +request.getFromBet;
+        gameData.currentBet = +request.getFromBet;
+        gameData.lostOnBets = 0;
+        gameData.loseStreak = 0;
+        gameData.betsCounter = 0;
 
+        placeBet(gameData, true);
+        
         isActive = true;
-        console.log(gameData);
+        // console.log('Начать');
     } else if (request.stop) {
         // Прекращаю
         isActive = false;
-
+        // console.log('Остановить');
     }
-    console.log(request.start);
-    sendResponse(true);
+    sendResponse({...gameData, status: 'Автоставка запущена...'});
 })
 
 
 let observer = new MutationObserver(betting);
 observer.observe(document.getElementById('past-queue-wrapper'), {childList: true});
 
+
 function betting() {
     if (!history.lastChild.classList.contains('past-spoiler') && isActive) {
         if (history.lastChild.classList.contains('past-0')) {
-            console.log('Победа');
+            // Победа
+
+            gameData.loseStreak = 0;
+            gameData.lostOnBets = 0;
+            gameData.currentBalance += gameData.currentBet * 2;
+
+            // console.log(`Победа! Баланс - ${gameData.currentBalance} очков. Количество ставок - ${gameData.betsCounter}`);
+
+            calculateNextBet(gameData);
+
+            if (gameData.currentBalance >= gameData.maxBalance) {
+                // Цель достигнута
+                // console.log(`_____ Цель ${gameData.maxBalance} очков достигнута. Баланс составляет ${gameData.currentBalance} очков`);
+                isActive = false;
+
+                chrome.runtime.sendMessage({...gameData, status: 'Цель достигнута!'});
+                return;
+            }
+            chrome.runtime.sendMessage(gameData);
+            
+            
+            placeBet(gameData);
         } else {
-            console.log('Поражение');
+            // Поражение
+
+            gameData.loseStreak++;
+            gameData.lostOnBets += gameData.currentBet;
+
+            // console.log(`Поражение! Баланс - ${gameData.currentBalance} очков. Количество ставок - ${gameData.betsCounter}`);
+            // console.log('lostOnBets == ', gameData.lostOnBets, 'loseStreak == ', gameData.loseStreak);
+
+            calculateNextBet(gameData);
+
+            if (gameData.currentBet > gameData.currentBalance) {
+                // Все деньги слиты
+                // console.log('_____ Недостаточно средств для ставки');
+                isActive = false;
+
+                chrome.runtime.sendMessage({...gameData, status: 'Ну всё, габэла..'});
+                return;
+            }
+
+            chrome.runtime.sendMessage(gameData);
+
+            placeBet(gameData);
         }
     }
+}
+
+
+
+function calculateNextBet(options) { // только серое, максимум 10 лузов подряд
+    const minimalBet = 10;
+    const maxLoseStreak = 10;
+
+    if (options.loseStreak >= maxLoseStreak) {
+        options.lostOnBets = 0;
+    }
+    
+    let bet = Math.ceil( (options.getFromBet + options.lostOnBets) / 2 );
+    if (bet < minimalBet) bet = minimalBet;
+
+    options.currentBet = bet;
+}
+
+function placeBet(options, now=false) {
+    document.getElementById('bet-input').value = options.currentBet;
+    options.currentBalance -= options.currentBet;
+    options.betsCounter++;
+
+    setTimeout(test, now ? 0 : 10000);
+}
+
+function test() {
+    // console.log(`Сделана ставка ${gameData.currentBet} монет на Серое. Баланс - ${gameData.currentBalance}.`);
+    chrome.runtime.sendMessage(gameData);
 }

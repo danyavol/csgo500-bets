@@ -57,14 +57,23 @@
         
 
         .card {
+            color: #b7c0be;
             background-color: #1c1c22;
             padding: 20px;
             margin: 20px;
         }
+        .value {
+            color: #c32d4f;
+            margin-left: 10px;
+        }
+        hr {
+            border: 0;
+            border-bottom: 1px solid #b7c0be;
+        }
     </style>
 </head>
 <body>
-    <h3 class="header">Автоставки CSGO500</h3>
+    <h2 class="header">Автоставка CSGO500</h2>
     <div class="card" id="options">
         <input type="number" id="getFromBet" placeholder="Прибыль с одной ставки" min="0" value="10">
         <input type="number" id="maxBalance" placeholder="Конечный баланс" min="0" value="50000">
@@ -73,8 +82,15 @@
             <button id="stopBetting" class="secondary">Остановить</button>
         </div>
     </div>
-    <div class="">
-
+    <div class="card" id="stats">
+        <h3 style="margin-top: 0;" id='title'>Автоставка запущена...</h3>
+        <div>Текущий баланс:<span class="value" id="currentBalance">5690</span></div>
+        <div>Ставок сделано:<span class="value" id="betsCounter">17</span></div>
+        <hr>
+        <div>Баланс в начале:<span class="value" id="startBalance">506</span></div>
+        <div>Цель:<span class="value" id="maxBalance_a">50000</span></div>
+        <div>Профит за ставку:<span class="value" id="getFromBet_a">10</span></div>
+        <div style="text-align: end; color: #666" id="startTime">18:26, 02.12</div>
     </div>
     <script src="js/popup.js"></script>
 </body>
